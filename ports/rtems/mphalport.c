@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <stdbool.h>
+
+// taken from py/misc.h
+typedef struct _vstr_t {
+    size_t alloc;
+    size_t len;
+    char *buf;
+    bool fixed_buf;
+} vstr_t;
+
+/* Receive single character, blocking until one is available */
+int mp_hal_stdin_rx_chr(void) {
+  return getc(stdin);
+}
+
+/* Send the string of given length */
+void mp_hal_stdout_tx_strn(const char *str, int len) {
+  printf("%s", str);
+  fflush(stdout);
+}
+
+/* custom readline implementation */
+int readline(vstr_t *line, const char *ps1) {
+    printf("%s", ps1);
+    fflush(stdout);
+
+    int i = line->len;
+    char ch;
+    while ((ch = getc(stdin)) != '\n') {
+      line->buf[i++] = ch;
+    }
+
+    line->len = i;
+    return 0;
+}
+
