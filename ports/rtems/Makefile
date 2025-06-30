@@ -24,7 +24,6 @@ LDFLAGS += $(RTEMS_TARGET_LDFLAGS)
 
 # Define the required source files.
 SRC_C = \
-    main.c \
     shared/readline/readline.c \
     shared/runtime/gchelper_generic.c \
     shared/runtime/pyexec.c \
@@ -37,8 +36,8 @@ SRC_QSTR += shared/readline/readline.c shared/runtime/pyexec.c
 # Define the required object files.
 OBJ = $(PY_CORE_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
 
-# Define the top-level target, the main firmware.
-all: $(OBJ)
+# Build MicroPython Library
+all: lib
 
 # Include remaining core make rules.
 include $(TOP)/py/mkrules.mk
