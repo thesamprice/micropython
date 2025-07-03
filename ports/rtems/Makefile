@@ -39,5 +39,13 @@ OBJ = $(PY_CORE_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
 # Build MicroPython Library
 all: lib
 
+# Build test application
+TEST_APP_INCLUDE = -L$(BUILD)/ -lmicropython -I. -I$(BUILD)/ -I../../
+
+test_app: lib
+	@echo "Building test_app.exe"
+	$(CC) $(CFLAGS) -o $(BUILD)/test_app.exe test_app/init.c test_app/main.c $(TEST_APP_INCLUDE) $(LDFLAGS)
+
 # Include remaining core make rules.
 include $(TOP)/py/mkrules.mk
+

@@ -1,0 +1,19 @@
+/*
+ * Simple RTEMS configuration
+ */
+#include <bsp.h>
+
+#define CONFIGURE_APPLICATION_NEEDS_CLOCK_DRIVER
+#define CONFIGURE_APPLICATION_NEEDS_CONSOLE_DRIVER
+#define CONFIGURE_APPLICATION_NEEDS_LIBBLOCK
+
+#define CONFIGURE_RTEMS_INIT_TASKS_TABLE
+#define CONFIGURE_MAXIMUM_TASKS 1
+
+#define CONFIGURE_SHELL_COMMANDS_INIT
+#define CONFIGURE_SHELL_COMMANDS_ALL
+#include <rtems/shellconfig.h>
+
+#define CONFIGURE_INIT
+
+#include <rtems/confdefs.h>
