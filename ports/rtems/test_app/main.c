@@ -21,10 +21,28 @@
 
 #include <rtems/shell.h>
 
+#include <fcntl.h>
+#include <rtems/imfs.h>
+
+#include "pytest.h"
+#define TARFILE_START pytest_tar
+#define TARFILE_SIZE pytest_tar_size
+
+static char buf[256];
+static const char file_path[] = "/test.py";
+
 /* Allocate memory for the MicroPython GC heap */
 static char heap[4096];
 
+
 rtems_task Init(rtems_task_argument ignored) {
+    /* load tarfs image */
+    rtems_status_code sc;
+    sc = rtems_tarfs_load("/",(void *)TARFILE_START, TARFILE_SIZE);
+    if (sc != RTEMS_SUCCESSFUL) {
+        printf ("error: untar failed: %s\n", rtems_status_text (sc));
+    }
+
     /* Initialise the MicroPython runtime */
     mp_stack_ctrl_init();
     gc_init(heap, heap + sizeof(heap));
@@ -60,10 +78,22 @@ void gc_collect(void) {
 
 /* There is no filesystem so stat'ing returns nothing */
 mp_import_stat_t mp_import_stat(const char *path) {
-    return MP_IMPORT_STAT_NO_EXIST;
-}
+    char file_path[256] = { 0 };
 
-/* There is no filesystem so opening a file raises an exception */
-mp_lexer_t *mp_lexer_new_from_file(qstr filename) {
-    mp_raise_OSError(MP_ENOENT);
+    sprintf(file_path, "/%s", path);
+
+    struct stat file_info;
+    int ret = stat(file_path, &file_info);
+
+    if (ret == -1) {
+        return MP_IMPORT_STAT_NO_EXIST;
+    }
+
+    if (file_info.st_mode & S_IFDIR) {
+        return MP_IMPORT_STAT_DIR;
+    }
+
+    if (file_info.st_mode & S_IFREG) {
+        return MP_IMPORT_STAT_FILE;
+    }
 }

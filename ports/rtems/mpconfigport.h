@@ -12,6 +12,9 @@
 #define MICROPY_USE_READLINE                    (0)
 #define MICROPY_REPL_AUTO_INDENT                (1)
 
+// #define MICROPY_ENABLE_EXTERNAL_IMPORT          (1)
+#define MICROPY_READER_POSIX                    (1)
+
 
 // Fine control over Python builtins, classes, modules, etc.
 #define MICROPY_PY_ASYNC_AWAIT                  (0)
@@ -21,6 +24,8 @@
 #define MICROPY_PY_MATH                         (0)
 #define MICROPY_PY_IO                           (0)
 #define MICROPY_PY_STRUCT                       (0)
+
+#define MICROPY_PY_FSTRINGS                     (1)
 
 // Type definitions for the specific machine.
 
