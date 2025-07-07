@@ -44,7 +44,7 @@ TEST_APP_INCLUDE = -L$(BUILD)/ -lmicropython -I. -I$(BUILD)/ -I../../
 
 test_app: lib
 	@echo "Building test_app.exe"
-	$(CC) $(CFLAGS) -o $(BUILD)/test_app.exe test_app/init.c test_app/main.c $(TEST_APP_INCLUDE) $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $(BUILD)/test_app.exe test_app/init.c test_app/main.c $(TEST_APP_INCLUDE) $(LDFLAGS) -lm
 
 # Include remaining core make rules.
 include $(TOP)/py/mkrules.mk
