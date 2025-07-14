@@ -15,6 +15,11 @@
 // #define MICROPY_ENABLE_EXTERNAL_IMPORT          (1)
 #define MICROPY_READER_POSIX                    (1)
 
+// time module
+#define MICROPY_PY_TIME                         (1)
+#define MICROPY_PY_TIME_TIME_TIME_NS            (1)
+#define MICROPY_PY_TIME_INCLUDEFILE "ports/rtems/modtime.c"
+
 
 // Fine control over Python builtins, classes, modules, etc.
 #define MICROPY_PY_ASYNC_AWAIT                  (0)
@@ -26,6 +31,7 @@
 #define MICROPY_PY_STRUCT                       (0)
 
 #define MICROPY_PY_FSTRINGS                     (1)
+#define MICROPY_LONGINT_IMPL        (MICROPY_LONGINT_IMPL_MPZ)
 
 // Type definitions for the specific machine.
 

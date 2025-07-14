@@ -28,6 +28,7 @@ SRC_C = \
     shared/runtime/gchelper_generic.c \
     shared/runtime/pyexec.c \
     shared/runtime/stdout_helpers.c \
+    extmod/modtime.c \
     mphalport.c
 
 # Define source files containung qstrs.
