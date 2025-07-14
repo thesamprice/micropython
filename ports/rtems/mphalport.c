@@ -56,13 +56,13 @@ void mp_hal_delay_us(uint64_t delay) {
 }
 
 uint64_t mp_hal_ticks_ms(void) {
-  return rtems_clock_get_ticks_per_second() * 1e3;
+  return rtems_clock_get_ticks_since_boot();
 }
 
 uint64_t mp_hal_ticks_us(void) {
-  return rtems_clock_get_ticks_per_second() * 1e6;
+  return rtems_clock_get_ticks_since_boot() * 1e3;
 }
 
 uint64_t mp_hal_ticks_cpu(void) {
-    return 0;
+  return rtems_clock_get_ticks_since_boot();
 }
