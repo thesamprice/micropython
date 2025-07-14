@@ -29,6 +29,7 @@ SRC_C = \
     shared/runtime/pyexec.c \
     shared/runtime/stdout_helpers.c \
     extmod/modtime.c \
+    extmod/modrandom.c \
     mphalport.c
 
 # Define source files containung qstrs.

@@ -20,6 +20,9 @@
 #define MICROPY_PY_TIME_TIME_TIME_NS            (1)
 #define MICROPY_PY_TIME_INCLUDEFILE "ports/rtems/modtime.c"
 
+// random module
+#define MICROPY_PY_RANDOM                       (1)
+#define MICROPY_PY_RANDOM_EXTRA_FUNCS           (1)
 
 // Fine control over Python builtins, classes, modules, etc.
 #define MICROPY_PY_ASYNC_AWAIT                  (0)
