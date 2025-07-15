@@ -49,13 +49,13 @@ TEST_APP_INCLUDE = -L$(BUILD)/ -lmicropython -I. -I$(BUILD)/ -I../../
 
 test_app: lib
 	@echo "Building test_app.exe"
-	$(CC) $(CFLAGS) -o $(BUILD)/test_app.exe test_app/init.c test_app/main.c $(BUILD)/pytest.c $(TEST_APP_INCLUDE) $(LDFLAGS) -lm
+	$(CC) $(CFLAGS) -o $(BUILD)/test_app.exe test/init.c test/main.c $(BUILD)/pytest.c $(TEST_APP_INCLUDE) $(LDFLAGS) -lm
 
 $(BUILD)/pytest.c: $(BUILD)/pytest.tar
 	rtems-bin2c $(BUILD)/pytest.tar $(BUILD)/pytest.c
 
-$(BUILD)/pytest.tar: test_app/test.py
-	tar -C test_app -cf $(BUILD)/pytest.tar test.py
+$(BUILD)/pytest.tar: test/test.py
+	tar -C test -cf $(BUILD)/pytest.tar test.py
 
 # Include remaining core make rules.
 include $(TOP)/py/mkrules.mk
