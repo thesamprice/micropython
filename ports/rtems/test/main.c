@@ -34,8 +34,7 @@ static const char file_path[] = "/test.py";
 /* Allocate memory for the MicroPython GC heap */
 static char heap[4096];
 
-
-rtems_task Init(rtems_task_argument ignored) {
+void *POSIX_Init(void *argument) {
 soft_reset:
     /* load tarfs image */
     rtems_status_code sc;

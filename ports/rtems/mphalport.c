@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include <stdbool.h>
+#include <time.h>
 
 #include <rtems.h>
 
@@ -47,7 +48,11 @@ uint64_t mp_hal_time_ns(void) {
 
 /* Wait for specified amount of milliseconds */
 void mp_hal_delay_ms(uint64_t delay) {
-  rtems_task_wake_after(rtems_clock_get_ticks_per_second() * delay / 1e3);
+  struct timespec duration;
+  duration.tv_sec = delay / 1000;
+  duration.tv_nsec = delay % 1000;
+
+  nanosleep(&duration, NULL);
 }
 
 /* Wait for specified amount of microseconds */
