@@ -36,6 +36,7 @@ static char heap[4096];
 
 
 rtems_task Init(rtems_task_argument ignored) {
+soft_reset:
     /* load tarfs image */
     rtems_status_code sc;
     sc = rtems_tarfs_load("/",(void *)TARFILE_START, TARFILE_SIZE);
@@ -53,12 +54,26 @@ rtems_task Init(rtems_task_argument ignored) {
     rtems_shell_wait_for_input(STDIN_FILENO, 0, NULL, NULL);
 
     /* Start a REPL */
-    pyexec_friendly_repl();
+    for (;;) {
+        if (pyexec_mode_kind == PYEXEC_MODE_RAW_REPL) {
+            if (pyexec_raw_repl() != 0) {
+                break;
+            }
+        } else {
+            if (pyexec_friendly_repl() != 0) {
+                break;
+            }
+        }
+    }
+
+    printf("soft reset\r\n");
 
     gc_sweep_all();
 
     /* Deinitialise the runtime */
     mp_deinit();
+
+    goto soft_reset;
   
     exit(0);
 }

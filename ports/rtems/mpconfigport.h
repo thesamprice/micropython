@@ -24,6 +24,14 @@
 #define MICROPY_PY_RANDOM                       (1)
 #define MICROPY_PY_RANDOM_EXTRA_FUNCS           (1)
 
+// machine module
+#define MICROPY_PY_MACHINE                      (1)
+#define MICROPY_PY_MACHINE_RESET                (1)
+#define MICROPY_PY_MACHINE_MEMX                 (1)
+#define MICROPY_PY_MACHINE_SIGNAL               (0)
+#define MICROPY_PY_MACHINE_INCLUDEFILE "ports/rtems/modmachine.c"
+
+
 // Fine control over Python builtins, classes, modules, etc.
 #define MICROPY_PY_ASYNC_AWAIT                  (0)
 #define MICROPY_PY_BUILTINS_SET                 (0)

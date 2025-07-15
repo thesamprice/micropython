@@ -23,13 +23,16 @@ CFLAGS += $(RTEMS_TARGET_CFLAGS)
 LDFLAGS += $(RTEMS_TARGET_LDFLAGS)
 
 # Define the required source files.
-SRC_C = \
-    shared/readline/readline.c \
+SRC_C =                               \
+    shared/readline/readline.c        \
     shared/runtime/gchelper_generic.c \
-    shared/runtime/pyexec.c \
-    shared/runtime/stdout_helpers.c \
-    extmod/modtime.c \
-    extmod/modrandom.c \
+    shared/runtime/pyexec.c           \
+    shared/runtime/stdout_helpers.c   \
+    extmod/modtime.c                  \
+    extmod/modrandom.c                \
+                                      \
+    extmod/modmachine.c               \
+    extmod/machine_mem.c              \
     mphalport.c
 
 # Define source files containung qstrs.
