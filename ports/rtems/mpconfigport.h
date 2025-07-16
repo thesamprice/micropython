@@ -5,7 +5,7 @@
 #define MICROPY_GC_SPLIT_HEAP                   (0)
 
 #define MICROPY_HELPER_REPL                     (1)
-#define MICROPY_ERROR_REPORTING                 (MICROPY_ERROR_REPORTING_TERSE)
+#define MICROPY_ERROR_REPORTING                 (MICROPY_ERROR_REPORTING_DETAILED)
 #define MICROPY_FLOAT_IMPL                      (MICROPY_FLOAT_IMPL_FLOAT)
 
 #define MICROPY_READLINE_HISTORY_SIZE           (0)
