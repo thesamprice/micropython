@@ -43,6 +43,7 @@
 
 #define MICROPY_PY_FSTRINGS                     (1)
 #define MICROPY_LONGINT_IMPL        (MICROPY_LONGINT_IMPL_MPZ)
+#define MPZ_DIG_SIZE                            16
 
 // Type definitions for the specific machine.
 
