@@ -7,13 +7,12 @@
 
 #include <rtems.h>
 
-// taken from py/misc.h
-typedef struct _vstr_t {
-    size_t alloc;
-    size_t len;
-    char *buf;
-    bool fixed_buf;
-} vstr_t;
+#include "mpconfigport.h"
+#include "py/misc.h"
+#include "shared/readline/readline.h"
+
+#define BACKSPACE 0x7F
+#define ENTER     0x0D
 
 /* Receive single character, blocking until one is available */
 int mp_hal_stdin_rx_chr(void) {
@@ -33,9 +32,26 @@ int readline(vstr_t *line, const char *ps1) {
 
     int i = line->len;
     char ch;
-    while ((ch = getc(stdin)) != '\n') {
+    while (ch != ENTER) {
+      ch = getc(stdin);
+
+      if (ch == BACKSPACE) {
+        if (i > 0) {
+          line->buf[i--] = 0;
+          printf("\b \b");
+        }
+        continue;
+      } else if (ch == CHAR_CTRL_A || ch == CHAR_CTRL_B || ch == CHAR_CTRL_C || ch == CHAR_CTRL_D) { /* Ctrl+A, Ctrl+B, Ctrl+C, Ctrl+D */
+        fflush(stdout);
+        line->len = 0;
+        return ch;
+      } 
+      else {
+        printf("%c", ch);
+      }
       line->buf[i++] = ch;
     }
+    printf("\n");
 
     line->len = i;
     return 0;

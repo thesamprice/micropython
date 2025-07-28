@@ -21,6 +21,8 @@
 
 #include <rtems/shell.h>
 
+#include <termios.h>
+
 #include <fcntl.h>
 #include <rtems/imfs.h>
 
@@ -33,6 +35,24 @@ static const char file_path[] = "/test.py";
 
 /* Allocate memory for the MicroPython GC heap */
 static char heap[4096];
+void make_raw_terminal(struct termios *previous_term) {
+    struct termios term;
+  if (tcgetattr(fileno(stdin), previous_term) == 0) {
+     term = *previous_term;
+     term.c_iflag &= ~(IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL|IXON);
+     term.c_oflag &= ~OPOST;
+     term.c_lflag &= ~(ECHO|ECHONL|ICANON|ISIG|IEXTEN);
+     term.c_cflag &= ~(CSIZE | PARENB);
+    term.c_cflag |= CS8;
+
+    term.c_cc[VMIN]  = 1;
+    term.c_cc[VTIME] = 0;
+    if (tcsetattr (fileno(stdin), TCSADRAIN, &term) < 0) {
+      printf("shell: cannot set terminal attributes\n");
+    }
+  }
+}
+
 
 void *POSIX_Init(void *argument) {
 soft_reset:
@@ -49,8 +69,9 @@ soft_reset:
 
     mp_init();
 
-    /* hack to get serial input to work on i386/pc686 BSP, TODO: replace with termios calls */
-    rtems_shell_wait_for_input(STDIN_FILENO, 0, NULL, NULL);
+    struct termios term;
+    make_raw_terminal(&term);
+
 
     /* Start a REPL */
     for (;;) {
@@ -65,7 +86,7 @@ soft_reset:
         }
     }
 
-    printf("soft reset\r\n");
+    printf("soft reboot\r\n");
 
     gc_sweep_all();
 

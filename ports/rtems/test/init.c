@@ -17,10 +17,6 @@ void *POSIX_Init(void *argument);
 
 #define CONFIGURE_RTEMS_FLOATING_POINT
 
-#define CONFIGURE_SHELL_COMMANDS_INIT
-#define CONFIGURE_SHELL_COMMANDS_ALL
-#include <rtems/shellconfig.h>
-
 #define CONFIGURE_INIT
 
 #include <rtems/confdefs.h>
