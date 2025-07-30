@@ -34,7 +34,9 @@ static char buf[256];
 static const char file_path[] = "/test.py";
 
 /* Allocate memory for the MicroPython GC heap */
-static char heap[4096];
+static char heap[16384];
+
+
 void make_raw_terminal(struct termios *previous_term) {
     struct termios term;
   if (tcgetattr(fileno(stdin), previous_term) == 0) {

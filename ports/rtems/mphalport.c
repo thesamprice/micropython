@@ -6,6 +6,7 @@
 #include <time.h>
 
 #include <rtems.h>
+#include <unistd.h>
 
 #include "mpconfigport.h"
 #include "py/misc.h"
@@ -21,8 +22,7 @@ int mp_hal_stdin_rx_chr(void) {
 
 /* Send the string of given length */
 void mp_hal_stdout_tx_strn(const char *str, int len) {
-  printf("%s", str);
-  fflush(stdout);
+  write(STDOUT_FILENO, str, len);
 }
 
 /* custom readline implementation */
