@@ -34,12 +34,67 @@
 
 // Fine control over Python builtins, classes, modules, etc.
 #define MICROPY_PY_ASYNC_AWAIT                  (0)
-#define MICROPY_PY_BUILTINS_SET                 (0)
-#define MICROPY_PY_ATTRTUPLE                    (0)
-#define MICROPY_PY_COLLECTIONS                  (0)
-#define MICROPY_PY_MATH                         (0)
+#define MICROPY_PY_BUILTINS_SET                 (1)
+#define MICROPY_PY_ATTRTUPLE                    (1)
+#define MICROPY_PY_MATH                         (1)
 #define MICROPY_PY_IO                           (0)
-#define MICROPY_PY_STRUCT                       (0)
+#define MICROPY_PY_STRUCT                       (1)
+#define MICROPY_PY_BUILTINS_NOTIMPLEMENTED      (1)
+#define MICROPY_CAN_OVERRIDE_BUILTINS           (1)
+#define MICROPY_PY_BUILTINS_COMPILE             (1)
+#define MICROPY_PY_BUILTINS_POW3                (1)
+#define MICROPY_PY_BUILTINS_RANGE_BINOP         (1)
+
+#define MICROPY_PY_BUILTINS_BYTES_HEX           (1)
+
+#define MICROPY_PY_BUILTINS_MEMORYVIEW          (1)
+#define MICROPY_PY_BUILTINS_MEMORYVIEW_ITEMSIZE (1)
+
+#define MICROPY_PY_IO_IOBASE                    (1)
+#define MICROPY_PY_IO_BUFFEREDWRITER            (1)
+
+#define MICROPY_PY_BUILTINS_STR_CENTER          (1)
+#define MICROPY_PY_BUILTINS_STR_COUNT           (1)
+#define MICROPY_PY_BUILTINS_STR_PARTITION       (1)
+#define MICROPY_PY_BUILTINS_STR_SPLITLINES      (1)
+
+#define MICROPY_PY_BUILTINS_SLICE               (1)
+#define MICROPY_PY_BUILTINS_SLICE_ATTRS         (1)
+#define MICROPY_PY_BUILTINS_SLICE_INDICES       (1)
+
+#define MICROPY_PY_BUILTINS_FROZENSET           (1)
+
+#define MICROPY_PY_ERRNO                        (1)
+#define MICROPY_PY_ERRNO_ERRORCODE              (1)
+
+#define MICROPY_PY_BUILTINS_ROUND_INT           (1)
+
+#define MICROPY_PY_ARRAY                        (1)
+#define MICROPY_PY_ARRAY_SLICE_ASSIGN           (1)
+
+#define MICROPY_PY_ALL_SPECIAL_METHODS          (1)
+#define MICROPY_PY_ALL_INPLACE_SPECIAL_METHODS  (1)
+#define MICROPY_PY_REVERSE_SPECIAL_METHODS      (1)
+
+#define MICROPY_PY_DELATTR_SETATTR              (1)
+#define MICROPY_PY_DESCRIPTORS                  (1)
+
+// sys module
+#define MICROPY_PY_SYS                          (1)
+#define MICROPY_PY_SYS_MAXSIZE                  (1)
+//#define MICROPY_PY_SYS_STDFILES                 (1)
+//#define MICROPY_PY_SYS_STDIO_BUFFER             (1)
+#define MICROPY_PY_SYS_TRACEBACKLIMIT           (1)
+#define MICROPY_PY_SYS_GETSIZEOF                (1)
+
+// collections
+#define MICROPY_PY_COLLECTIONS                    (1)
+#define MICROPY_PY_COLLECTIONS_DEQUE              (1)
+#define MICROPY_PY_COLLECTIONS_DEQUE_ITER         (1)
+#define MICROPY_PY_COLLECTIONS_DEQUE_SUBSCR       (1)
+#define MICROPY_PY_COLLECTIONS_ORDEREDDICT        (1)
+#define MICROPY_PY_COLLECTIONS_NAMEDTUPLE__ASDICT (1)
+
 
 #define MICROPY_PY_FSTRINGS                     (1)
 #define MICROPY_LONGINT_IMPL        (MICROPY_LONGINT_IMPL_MPZ)
