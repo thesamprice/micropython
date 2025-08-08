@@ -45,6 +45,8 @@
 #define MICROPY_PY_BUILTINS_POW3                (1)
 #define MICROPY_PY_BUILTINS_RANGE_BINOP         (1)
 
+#define MICROPY_PY_FUNCTION_ATTRS               (1)
+
 #define MICROPY_PY_BUILTINS_BYTES_HEX           (1)
 
 #define MICROPY_PY_BUILTINS_MEMORYVIEW          (1)
