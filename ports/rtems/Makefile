@@ -30,6 +30,7 @@ SRC_C =                               \
     shared/runtime/stdout_helpers.c   \
     extmod/modtime.c                  \
     extmod/modrandom.c                \
+    extmod/modplatform.c              \
                                       \
     extmod/modmachine.c               \
     extmod/machine_mem.c              \

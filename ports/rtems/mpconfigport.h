@@ -31,6 +31,7 @@
 #define MICROPY_PY_MACHINE_SIGNAL               (0)
 #define MICROPY_PY_MACHINE_INCLUDEFILE "ports/rtems/modmachine.c"
 
+#define MICROPY_PY_PLATFORM                     (1)
 
 // Fine control over Python builtins, classes, modules, etc.
 #define MICROPY_PY_ASYNC_AWAIT                  (0)
