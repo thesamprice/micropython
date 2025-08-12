@@ -41,7 +41,7 @@ void make_raw_terminal(struct termios *previous_term) {
     struct termios term;
   if (tcgetattr(fileno(stdin), previous_term) == 0) {
      term = *previous_term;
-     term.c_iflag &= ~(IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL|IXON);
+     term.c_iflag &= ~(IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL) | IXON;
      term.c_oflag &= ~OPOST;
      term.c_lflag &= ~(ECHO|ECHONL|ICANON|ISIG|IEXTEN);
      term.c_cflag &= ~(CSIZE | PARENB);
