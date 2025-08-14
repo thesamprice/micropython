@@ -31,6 +31,7 @@ SRC_C =                               \
     extmod/modtime.c                  \
     extmod/modrandom.c                \
     extmod/modplatform.c              \
+    extmod/modre.c                    \
                                       \
     extmod/modmachine.c               \
     extmod/machine_mem.c              \

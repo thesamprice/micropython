@@ -3,6 +3,8 @@
 // Python internal features.
 #define MICROPY_ENABLE_GC                       (1)
 #define MICROPY_GC_SPLIT_HEAP                   (0)
+#define MICROPY_STACK_CHECK_MARGIN              (1)
+#define MICROPY_DEBUG_VM_STACK_OVERFLOW         (1)
 
 #define MICROPY_HELPER_REPL                     (1)
 #define MICROPY_ERROR_REPORTING                 (MICROPY_ERROR_REPORTING_DETAILED)
@@ -82,6 +84,12 @@
 #define MICROPY_PY_DELATTR_SETATTR              (1)
 #define MICROPY_PY_DESCRIPTORS                  (1)
 
+// re module
+#define MICROPY_PY_RE                           (1)
+#define MICROPY_PY_RE_DEBUG                     (1)
+#define MICROPY_PY_RE_MATCH_GROUPS              (1)
+#define MICROPY_PY_RE_MATCH_SPAN_START_END      (1)
+#define MICROPY_PY_RE_SUB                       (1)
 // sys module
 #define MICROPY_PY_SYS                          (1)
 #define MICROPY_PY_SYS_MAXSIZE                  (1)
