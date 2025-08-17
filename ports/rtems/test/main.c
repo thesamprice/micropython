@@ -107,6 +107,12 @@ soft_reset:
     exit(0);
 }
 
+mp_obj_t mp_builtin_open(size_t n_args, const mp_obj_t *args, mp_map_t *kwargs) {
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_KW(mp_builtin_open_obj, 1, mp_builtin_open);
+
+
 /* Handle uncaught exceptions (should never be reached in a correct C implementation) */
 void nlr_jump_fail(void *val) {
     for (;;) {

@@ -14,6 +14,10 @@
 #define MICROPY_USE_READLINE                    (0)
 #define MICROPY_REPL_AUTO_INDENT                (1)
 
+#define MICROPY_STREAMS_POSIX_API               (1)
+
+#define MICROPY_PY___FILE__                     (1)
+
 // #define MICROPY_ENABLE_EXTERNAL_IMPORT          (1)
 #define MICROPY_READER_POSIX                    (1)
 
@@ -33,6 +37,14 @@
 #define MICROPY_PY_MACHINE_SIGNAL               (0)
 #define MICROPY_PY_MACHINE_INCLUDEFILE "ports/rtems/modmachine.c"
 
+// micropython module
+#define MICROPY_PY_MICROPYTHON_STACK_USE        (1)
+#define MICROPY_PY_MICROPYTHON_HEAP_LOCKED      (1)
+
+// os module
+#define MICROPY_PY_OS                           (1)
+#define MICROPY_PY_OS_UNAME                     (1)
+
 #define MICROPY_PY_PLATFORM                     (1)
 
 // Fine control over Python builtins, classes, modules, etc.
@@ -40,13 +52,13 @@
 #define MICROPY_PY_BUILTINS_SET                 (1)
 #define MICROPY_PY_ATTRTUPLE                    (1)
 #define MICROPY_PY_MATH                         (1)
-#define MICROPY_PY_IO                           (0)
 #define MICROPY_PY_STRUCT                       (1)
 #define MICROPY_PY_BUILTINS_NOTIMPLEMENTED      (1)
 #define MICROPY_CAN_OVERRIDE_BUILTINS           (1)
 #define MICROPY_PY_BUILTINS_COMPILE             (1)
 #define MICROPY_PY_BUILTINS_POW3                (1)
 #define MICROPY_PY_BUILTINS_RANGE_BINOP         (1)
+#define MICROPY_PY_BUILTINS_STR_UNICODE         (1)
 
 #define MICROPY_PY_FUNCTION_ATTRS               (1)
 
@@ -55,7 +67,9 @@
 #define MICROPY_PY_BUILTINS_MEMORYVIEW          (1)
 #define MICROPY_PY_BUILTINS_MEMORYVIEW_ITEMSIZE (1)
 
+#define MICROPY_PY_IO                           (1)
 #define MICROPY_PY_IO_IOBASE                    (1)
+#define MICROPY_PY_IO_BYTESIO                   (1)
 #define MICROPY_PY_IO_BUFFEREDWRITER            (1)
 
 #define MICROPY_PY_BUILTINS_STR_CENTER          (1)
@@ -84,12 +98,32 @@
 #define MICROPY_PY_DELATTR_SETATTR              (1)
 #define MICROPY_PY_DESCRIPTORS                  (1)
 
+#define MICROPY_PY_HEAPQ                        (1)
+
+// hashlib
+#define MICROPY_PY_HASHLIB                      (1)
+// #define MICROPY_PY_HASHLIB_MD5                  (1)
+// #define MICROPY_PY_HASHLIB_SHA1                 (1)
+// #define MICROPY_PY_HASHLIB_SHA256               (1)
+
+// uctypes module
+#define MICROPY_PY_UCTYPES                      (1)
+
+// btree module
+// #define MICROPY_PY_BTREE                        (1)
+
 // re module
 #define MICROPY_PY_RE                           (1)
 #define MICROPY_PY_RE_DEBUG                     (1)
 #define MICROPY_PY_RE_MATCH_GROUPS              (1)
 #define MICROPY_PY_RE_MATCH_SPAN_START_END      (1)
 #define MICROPY_PY_RE_SUB                       (1)
+
+#define MICROPY_PY_MATH_SPECIAL_FUNCTIONS       (1)
+
+// cmath module
+#define MICROPY_PY_CMATH                        (1)
+
 // sys module
 #define MICROPY_PY_SYS                          (1)
 #define MICROPY_PY_SYS_MAXSIZE                  (1)
@@ -100,6 +134,9 @@
 #define MICROPY_PY_SYS_PATH                     (1)
 #define MICROPY_PY_SYS_ATEXIT                   (1)
 // #define MICROPY_PY_SYS_SETTRACE                 (1)
+
+// json module
+#define MICROPY_PY_JSON                         (1)
 
 // collections
 #define MICROPY_PY_COLLECTIONS                    (1)
@@ -126,6 +163,7 @@ typedef long mp_off_t;
 // Define the port's name and hardware.
 #define MICROPY_HW_BOARD_NAME "rtems-i386/pc686"
 #define MICROPY_HW_MCU_NAME   "unknown-cpu"
+#define MICROPY_PY_SYS_PLATFORM "minimal"
 
 #define MP_STATE_PORT MP_STATE_VM
 
