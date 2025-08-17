@@ -93,10 +93,13 @@
 // sys module
 #define MICROPY_PY_SYS                          (1)
 #define MICROPY_PY_SYS_MAXSIZE                  (1)
-//#define MICROPY_PY_SYS_STDFILES                 (1)
-//#define MICROPY_PY_SYS_STDIO_BUFFER             (1)
-#define MICROPY_PY_SYS_TRACEBACKLIMIT           (1)
+// #define MICROPY_PY_SYS_STDFILES                 (1)
+#define MICROPY_PY_SYS_STDIO_BUFFER             (1)
+// #define MICROPY_PY_SYS_TRACEBACKLIMIT           (1)
 #define MICROPY_PY_SYS_GETSIZEOF                (1)
+#define MICROPY_PY_SYS_PATH                     (1)
+#define MICROPY_PY_SYS_ATEXIT                   (1)
+// #define MICROPY_PY_SYS_SETTRACE                 (1)
 
 // collections
 #define MICROPY_PY_COLLECTIONS                    (1)
