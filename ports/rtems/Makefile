@@ -41,7 +41,8 @@ SRC_C =                               \
                                       \
     extmod/modmachine.c               \
     extmod/machine_mem.c              \
-    mphalport.c
+    mphalport.c                       \
+    mpthreadport.c
 
 # Define source files containung qstrs.
 SRC_QSTR += shared/readline/readline.c shared/runtime/pyexec.c

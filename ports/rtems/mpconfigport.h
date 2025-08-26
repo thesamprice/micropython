@@ -114,6 +114,11 @@
 // uctypes module
 #define MICROPY_PY_UCTYPES                      (1)
 
+// threads
+#define MICROPY_PY_THREAD                       (1)
+#define MICROPY_PY_THREAD_RECURSIVE_MUTEX       (1)
+#define MICROPY_PY_THREAD_GIL                   (1)
+
 // btree module
 // #define MICROPY_PY_BTREE                        (1)
 
