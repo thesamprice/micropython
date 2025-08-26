@@ -1,0 +1,22 @@
+variables:
+  REJECT_MSG: "Changes outside of ports/rtems/ Are rejected in this repository"
+
+include:
+- project: 'administration/integration'
+  file:
+  - 'ci/config/rtems.yml'
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    changes:
+    - ports/rtems/*
+
+- project: 'administration/integration'
+  file:
+  - 'ci/config/reject.yml'
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    changes:
+    - ports/rtems/*
+    when: never
+
+  - when: always
