@@ -8,11 +8,14 @@
 
 #define MICROPY_HELPER_REPL                     (1)
 #define MICROPY_ERROR_REPORTING                 (MICROPY_ERROR_REPORTING_DETAILED)
+#define MICROPY_ENABLE_SOURCE_LINE              (1)
 #define MICROPY_FLOAT_IMPL                      (MICROPY_FLOAT_IMPL_FLOAT)
 
 #define MICROPY_READLINE_HISTORY_SIZE           (0)
 #define MICROPY_USE_READLINE                    (0)
 #define MICROPY_REPL_AUTO_INDENT                (1)
+
+#define MICROPY_PY_ALL_INPLACE_SPECIAL_METHODS  (1)
 
 #define MICROPY_STREAMS_POSIX_API               (1)
 
@@ -59,8 +62,10 @@
 #define MICROPY_PY_BUILTINS_POW3                (1)
 #define MICROPY_PY_BUILTINS_RANGE_BINOP         (1)
 #define MICROPY_PY_BUILTINS_STR_UNICODE         (1)
+#define MICROPY_PY_BUILTINS_NEXT2               (1)
 
 #define MICROPY_PY_FUNCTION_ATTRS               (1)
+#define MICROPY_PY_FUNCTION_ATTRS_CODE          (1)
 
 #define MICROPY_PY_BUILTINS_BYTES_HEX           (1)
 
@@ -120,6 +125,13 @@
 #define MICROPY_PY_RE_SUB                       (1)
 
 #define MICROPY_PY_MATH_SPECIAL_FUNCTIONS       (1)
+#define MICROPY_PY_MATH_CONSTANTS               (1)
+#define MICROPY_PY_MATH_FACTORIAL               (1)
+#define MICROPY_PY_MATH_ISCLOSE                 (1)
+// #define MICROPY_PY_MATH_ATAN2_FIX_INFNAN        (1)
+#define MICROPY_PY_MATH_MODF_FIX_NEGZERO        (1)
+#define MICROPY_PY_MATH_GAMMA_FIX_NEGINF        (1)
+// #define MICROPY_PY_MATH_POW_FIX_NAN             (1)
 
 // cmath module
 #define MICROPY_PY_CMATH                        (1)
@@ -128,15 +140,18 @@
 #define MICROPY_PY_SYS                          (1)
 #define MICROPY_PY_SYS_MAXSIZE                  (1)
 // #define MICROPY_PY_SYS_STDFILES                 (1)
-#define MICROPY_PY_SYS_STDIO_BUFFER             (1)
+// #define MICROPY_PY_SYS_STDIO_BUFFER             (1)
 // #define MICROPY_PY_SYS_TRACEBACKLIMIT           (1)
 #define MICROPY_PY_SYS_GETSIZEOF                (1)
 #define MICROPY_PY_SYS_PATH                     (1)
 #define MICROPY_PY_SYS_ATEXIT                   (1)
-// #define MICROPY_PY_SYS_SETTRACE                 (1)
+#define MICROPY_PY_SYS_SETTRACE                 (1)
 
 // json module
 #define MICROPY_PY_JSON                         (1)
+
+// binascii module
+#define MICROPY_PY_BINASCII                     (1)
 
 // collections
 #define MICROPY_PY_COLLECTIONS                    (1)
@@ -147,9 +162,12 @@
 #define MICROPY_PY_COLLECTIONS_NAMEDTUPLE__ASDICT (1)
 
 
+#define MICROPY_PY_BUILTINS_STR_OP_MODULO       (1)
 #define MICROPY_PY_FSTRINGS                     (1)
 #define MICROPY_LONGINT_IMPL        (MICROPY_LONGINT_IMPL_MPZ)
 #define MPZ_DIG_SIZE                            16
+
+#define MICROPY_PY_BUILTINS_HELP                (1)
 
 // Type definitions for the specific machine.
 

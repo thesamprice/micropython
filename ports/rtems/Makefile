@@ -37,6 +37,7 @@ SRC_C =                               \
     extmod/modos.c                    \
     extmod/modjson.c                  \
     extmod/moductypes.c               \
+    extmod/modbinascii.c              \
                                       \
     extmod/modmachine.c               \
     extmod/machine_mem.c              \
