@@ -12,7 +12,7 @@ include:
 
 - project: 'administration/integration'
   file:
-  - 'ci/config/reject.yml'
+  - 'ci/stages/reject.yml'
   rules:
   - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     changes:
