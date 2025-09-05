@@ -92,7 +92,7 @@
 #define MICROPY_PY_BUILTINS_NEXT2               (1)
 
 #define MICROPY_PY_FUNCTION_ATTRS               (1)
-#define MICROPY_PY_FUNCTION_ATTRS_CODE          (1)
+// #define MICROPY_PY_FUNCTION_ATTRS_CODE          (1)
 
 #define MICROPY_PY_BUILTINS_BYTES_HEX           (1)
 
