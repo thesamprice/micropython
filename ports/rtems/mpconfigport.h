@@ -27,7 +27,7 @@
 
 #include <stdint.h>
 
-// Python internal features.
+/* Python internal features */
 #define MICROPY_ENABLE_GC                       (1)
 #define MICROPY_GC_SPLIT_HEAP                   (0)
 #define MICROPY_STACK_CHECK_MARGIN              (1)
@@ -48,36 +48,35 @@
 
 #define MICROPY_PY___FILE__                     (1)
 
-// #define MICROPY_ENABLE_EXTERNAL_IMPORT          (1)
 #define MICROPY_READER_POSIX                    (1)
 
-// time module
+/* time module */
 #define MICROPY_PY_TIME                         (1)
 #define MICROPY_PY_TIME_TIME_TIME_NS            (1)
 #define MICROPY_PY_TIME_INCLUDEFILE "ports/rtems/modtime.c"
 
-// random module
+/* random module */
 #define MICROPY_PY_RANDOM                       (1)
 #define MICROPY_PY_RANDOM_EXTRA_FUNCS           (1)
 
-// machine module
+/* machine module */
 #define MICROPY_PY_MACHINE                      (1)
 #define MICROPY_PY_MACHINE_RESET                (1)
 #define MICROPY_PY_MACHINE_MEMX                 (1)
 #define MICROPY_PY_MACHINE_SIGNAL               (0)
 #define MICROPY_PY_MACHINE_INCLUDEFILE "ports/rtems/modmachine.c"
 
-// micropython module
+/* micropython module */
 #define MICROPY_PY_MICROPYTHON_STACK_USE        (1)
 #define MICROPY_PY_MICROPYTHON_HEAP_LOCKED      (1)
 
-// os module
+/* os module */
 #define MICROPY_PY_OS                           (1)
 #define MICROPY_PY_OS_UNAME                     (1)
 
 #define MICROPY_PY_PLATFORM                     (1)
 
-// Fine control over Python builtins, classes, modules, etc.
+/* Fine control over Python builtins, classes, modules, etc */
 #define MICROPY_PY_ASYNC_AWAIT                  (0)
 #define MICROPY_PY_BUILTINS_SET                 (1)
 #define MICROPY_PY_ATTRTUPLE                    (1)
@@ -92,7 +91,12 @@
 #define MICROPY_PY_BUILTINS_NEXT2               (1)
 
 #define MICROPY_PY_FUNCTION_ATTRS               (1)
-// #define MICROPY_PY_FUNCTION_ATTRS_CODE          (1)
+/* 
+ * FIXME: This can be enabled when we can `mip install unittest`
+ * for the associated test to pass.
+ *
+ * #define MICROPY_PY_FUNCTION_ATTRS_CODE          (1) 
+ */
 
 #define MICROPY_PY_BUILTINS_BYTES_HEX           (1)
 
@@ -132,24 +136,18 @@
 
 #define MICROPY_PY_HEAPQ                        (1)
 
-// hashlib
+/* hashlib */
 #define MICROPY_PY_HASHLIB                      (1)
-// #define MICROPY_PY_HASHLIB_MD5                  (1)
-// #define MICROPY_PY_HASHLIB_SHA1                 (1)
-// #define MICROPY_PY_HASHLIB_SHA256               (1)
 
-// uctypes module
+/* uctypes module */
 #define MICROPY_PY_UCTYPES                      (1)
 
-// threads
+/* threads */
 #define MICROPY_PY_THREAD                       (1)
 #define MICROPY_PY_THREAD_RECURSIVE_MUTEX       (1)
 #define MICROPY_PY_THREAD_GIL                   (1)
 
-// btree module
-// #define MICROPY_PY_BTREE                        (1)
-
-// re module
+/* re module */
 #define MICROPY_PY_RE                           (1)
 #define MICROPY_PY_RE_DEBUG                     (1)
 #define MICROPY_PY_RE_MATCH_GROUPS              (1)
@@ -160,32 +158,27 @@
 #define MICROPY_PY_MATH_CONSTANTS               (1)
 #define MICROPY_PY_MATH_FACTORIAL               (1)
 #define MICROPY_PY_MATH_ISCLOSE                 (1)
-// #define MICROPY_PY_MATH_ATAN2_FIX_INFNAN        (1)
 #define MICROPY_PY_MATH_MODF_FIX_NEGZERO        (1)
 #define MICROPY_PY_MATH_GAMMA_FIX_NEGINF        (1)
-// #define MICROPY_PY_MATH_POW_FIX_NAN             (1)
 
-// cmath module
+/* cmath module */
 #define MICROPY_PY_CMATH                        (1)
 
-// sys module
+/* sys module */
 #define MICROPY_PY_SYS                          (1)
 #define MICROPY_PY_SYS_MAXSIZE                  (1)
-// #define MICROPY_PY_SYS_STDFILES                 (1)
-// #define MICROPY_PY_SYS_STDIO_BUFFER             (1)
-// #define MICROPY_PY_SYS_TRACEBACKLIMIT           (1)
 #define MICROPY_PY_SYS_GETSIZEOF                (1)
 #define MICROPY_PY_SYS_PATH                     (1)
 #define MICROPY_PY_SYS_ATEXIT                   (1)
 #define MICROPY_PY_SYS_SETTRACE                 (1)
 
-// json module
+/* json module */
 #define MICROPY_PY_JSON                         (1)
 
-// binascii module
+/* binascii module */
 #define MICROPY_PY_BINASCII                     (1)
 
-// collections
+/* collections */
 #define MICROPY_PY_COLLECTIONS                    (1)
 #define MICROPY_PY_COLLECTIONS_DEQUE              (1)
 #define MICROPY_PY_COLLECTIONS_DEQUE_ITER         (1)
@@ -201,16 +194,16 @@
 
 #define MICROPY_PY_BUILTINS_HELP                (1)
 
-// Type definitions for the specific machine.
+/* Type definitions for the specific machine */
 
-typedef intptr_t mp_int_t; // must be pointer size
-typedef uintptr_t mp_uint_t; // must be pointer size
+typedef intptr_t mp_int_t; /* must be pointer size */
+typedef uintptr_t mp_uint_t; /* must be pointer size */
 typedef long mp_off_t;
 
-// We need to provide a declaration/definition of alloca().
+/* We need to provide a declaration/definition of alloca() */
 #include <alloca.h>
 
-// Define the port's name and hardware.
+/* Define the port's name and hardware */
 #define MICROPY_HW_BOARD_NAME "rtems-i386/pc686"
 #define MICROPY_HW_MCU_NAME   "unknown-cpu"
 #define MICROPY_PY_SYS_PLATFORM "minimal"
