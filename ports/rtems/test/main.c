@@ -141,8 +141,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(mp_builtin_open_obj, 1, mp_builtin_open);
 
 /* Handle uncaught exceptions (should never be reached in a correct C implementation) */
 void nlr_jump_fail(void *val) {
-    for (;;) {
-    }
+    rtems_fatal(RTEMS_FATAL_SOURCE_APPLICATION, 1);
 }
 
 /* Do a garbage collection cycle */
