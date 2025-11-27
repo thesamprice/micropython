@@ -84,52 +84,51 @@ void make_raw_terminal(struct termios *previous_term) {
 
 
 void *POSIX_Init(void *argument) {
-soft_reset:
-    /* load tarfs image */
-    rtems_status_code sc;
-    sc = rtems_tarfs_load("/",(void *)TARFILE_START, TARFILE_SIZE);
-    if (sc != RTEMS_SUCCESSFUL) {
-        printf ("error: untar failed: %s\n", rtems_status_text (sc));
-    }
+    while (1) {
+        /* load tarfs image */
+        rtems_status_code sc;
+        sc = rtems_tarfs_load("/",(void *)TARFILE_START, TARFILE_SIZE);
+        if (sc != RTEMS_SUCCESSFUL) {
+            printf ("error: untar failed: %s\n", rtems_status_text (sc));
+        }
 
-    /* Initialise the MicroPython runtime */
-    mp_stack_ctrl_init();
-    gc_init(heap, heap + sizeof(heap));
+        /* Initialise the MicroPython runtime */
+        mp_stack_ctrl_init();
+        gc_init(heap, heap + sizeof(heap));
 
-    mp_init();
+        mp_init();
 
-    struct termios term;
-    make_raw_terminal(&term);
+        struct termios term;
+        make_raw_terminal(&term);
 
 
-    /* Start a REPL */
-    for (;;) {
-        if (pyexec_mode_kind == PYEXEC_MODE_RAW_REPL) {
-            if (pyexec_raw_repl() != 0) {
-                break;
-            }
-        } else {
-            if (pyexec_friendly_repl() != 0) {
-                break;
+        /* Start a REPL */
+        for (;;) {
+            if (pyexec_mode_kind == PYEXEC_MODE_RAW_REPL) {
+                if (pyexec_raw_repl() != 0) {
+                    break;
+                }
+            } else {
+                if (pyexec_friendly_repl() != 0) {
+                    break;
+                }
             }
         }
+
+        #if MICROPY_PY_SYS_ATEXIT
+        /* Beware, the sys.settrace callback should be disabled before running sys.atexit */
+        if (mp_obj_is_callable(MP_STATE_VM(sys_exitfunc))) {
+            mp_call_function_0(MP_STATE_VM(sys_exitfunc));
+        }
+        #endif
+
+        printf("soft reboot\r\n");
+
+        gc_sweep_all();
+
+        /* Deinitialise the runtime */
+        mp_deinit();
     }
-
-    #if MICROPY_PY_SYS_ATEXIT
-    /* Beware, the sys.settrace callback should be disabled before running sys.atexit */
-    if (mp_obj_is_callable(MP_STATE_VM(sys_exitfunc))) {
-        mp_call_function_0(MP_STATE_VM(sys_exitfunc));
-    }
-    #endif
-
-    printf("soft reboot\r\n");
-
-    gc_sweep_all();
-
-    /* Deinitialise the runtime */
-    mp_deinit();
-
-    goto soft_reset;
   
     exit(0);
 }
