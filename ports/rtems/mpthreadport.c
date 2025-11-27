@@ -88,7 +88,7 @@ mp_uint_t mp_thread_create(void *(*entry)(void *), void *arg,
 
   rtems_status_code sc =
       rtems_task_create(rtems_build_name('M', 'T', 'H', 'D'), /* task name  */
-                        1,                                    /* priority   */
+                        150,                                  /* priority   */
                         RTEMS_MPY_THREAD_TASK_STACK_SIZE,     /* stack size */
                         RTEMS_DEFAULT_MODES | RTEMS_TIMESLICE,
                         RTEMS_DEFAULT_ATTRIBUTES, &task_id);
