@@ -68,7 +68,8 @@ int readline(vstr_t *line, const char *ps1) {
           printf("\b \b");
         }
         continue;
-      } else if (ch == CHAR_CTRL_A || ch == CHAR_CTRL_B || ch == CHAR_CTRL_C || ch == CHAR_CTRL_D) { /* Ctrl+A, Ctrl+B, Ctrl+C, Ctrl+D */
+      } else if (ch == CHAR_CTRL_A || ch == CHAR_CTRL_B || ch == CHAR_CTRL_C || 
+                 ch == CHAR_CTRL_D) { 
         fflush(stdout);
         line->len = 0;
         return ch;
