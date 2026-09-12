@@ -185,6 +185,24 @@ mp_state_thread_t *mp_thread_get_state(void) {
 
   unlock_threads_list();
 
+  /*
+   * A task that is not in the list is the one that has not registered yet,
+   * and that is always the main one: mp_thread_init() adds it, and it is
+   * called from mp_init().  Anything MicroPython does before that -- and
+   * mp_stack_ctrl_init() is called before it by every port's main() --
+   * reaches MP_STATE_THREAD, which is mp_thread_get_state()->field.
+   *
+   * Returning NULL there means dereferencing NULL.  On i386/pc686 that
+   * happens to land in mapped low memory and the store is silently lost; on
+   * arm/xilinx_zynq_a9_qemu it is a data abort before a single line of output,
+   * which is why the port ran on one and not the other.
+   *
+   * The main thread's state lives in mp_state_ctx, so hand that back.
+   */
+  if (result == NULL) {
+    result = &mp_state_ctx.thread;
+  }
+
   return result;
 }
 
