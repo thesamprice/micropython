@@ -46,6 +46,24 @@
 
 #define MICROPY_STREAMS_POSIX_API               (1)
 
+/*
+ * Sockets.
+ *
+ * RTEMS has BSD sockets -- rtems-lwip provides them over lwIP -- so the POSIX
+ * implementation in ports/unix/modsocket.c works here unchanged.  That is why
+ * this port takes that file rather than extmod/modlwip.c: modlwip talks to
+ * lwIP's raw API and would bypass the sockets RTEMS already offers, and
+ * extmod/modsocket.c wants a mod_network_nic_type_t driver that this port has
+ * no reason to invent.
+ *
+ * MICROPY_PY_SELECT_POSIX is what lets select/poll work on those descriptors,
+ * which a socket module is not much use without.
+ */
+#define MICROPY_PY_SOCKET                       (1)
+#define MICROPY_PY_SELECT                       (1)
+#define MICROPY_PY_SELECT_POSIX                 (1)
+#define MICROPY_PY_SELECT_SELECT                (1)
+
 #define MICROPY_PY___FILE__                     (1)
 
 #define MICROPY_READER_POSIX                    (1)

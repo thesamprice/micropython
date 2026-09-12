@@ -49,6 +49,8 @@ LDFLAGS += $(RTEMS_TARGET_LDFLAGS)
 
 # Define the required source files.
 SRC_C =                               \
+    modsocket.c                       \
+    extmod/modselect.c                \
     shared/readline/readline.c        \
     shared/runtime/gchelper_generic.c \
     shared/runtime/pyexec.c           \
@@ -70,7 +72,10 @@ SRC_C =                               \
     mpthreadport.c
 
 # Define source files containung qstrs.
-SRC_QSTR += shared/readline/readline.c shared/runtime/pyexec.c
+# modsocket.c is here for the same reason as the two below: its method names
+# -- bind, listen, accept, recv -- are qstrs, and a file not scanned here
+# compiles against qstr identifiers that were never generated.
+SRC_QSTR += shared/readline/readline.c shared/runtime/pyexec.c modsocket.c
 
 # Define the required object files.
 OBJ = $(PY_CORE_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
@@ -90,6 +95,23 @@ $(BUILD)/pytest.c: $(BUILD)/pytest.tar
 
 $(BUILD)/pytest.tar: test/test.py
 	tar -C test -cf $(BUILD)/pytest.tar test.py
+
+# The networking example.  Separate from test_app because it needs a BSP with a
+# network stack -- arm/xilinx_zynq_a9_qemu through rtems-lwip -- and linking
+# -llwip into the plain test app would make every board need one.
+NET_APP_INCLUDE = -L$(BUILD)/ -lmicropython -I. -I$(BUILD)/ -I../../
+
+net_app: lib $(BUILD)/pynet.c
+	@echo "Building net_app.exe"
+	$(CC) $(CFLAGS) -o $(BUILD)/net_app.exe examples/network/init.c \
+	    examples/network/main.c $(BUILD)/pynet.c $(NET_APP_INCLUDE) \
+	    -llwip $(LDFLAGS) -lm
+
+$(BUILD)/pynet.c: $(BUILD)/pynet.tar
+	rtems-bin2c $(BUILD)/pynet.tar $(BUILD)/pynet.c
+
+$(BUILD)/pynet.tar: examples/network/net.py
+	tar -C examples/network -cf $(BUILD)/pynet.tar net.py
 
 # Include remaining core make rules.
 include $(TOP)/py/mkrules.mk

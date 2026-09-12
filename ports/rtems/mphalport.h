@@ -30,4 +30,37 @@
 
 static inline void mp_hal_set_interrupt_char(char c) {}
 
+
+/*
+ * PEP 475: a syscall interrupted by a signal is retried rather than raising.
+ *
+ * Taken from ports/unix/mphalport.h unchanged, because ports/unix/modsocket.c
+ * -- which this port uses for its socket module, RTEMS having BSD sockets --
+ * expects both of these from the port's HAL header rather than from a shared
+ * one.  Neither macro is unix-specific: they use only MP_THREAD_GIL_*, errno
+ * and mp_handle_pending().
+ */
+#include <errno.h>
+
+#define MP_HAL_RETRY_SYSCALL(ret, syscall, raise) { \
+        for (;;) { \
+            MP_THREAD_GIL_EXIT(); \
+            ret = syscall; \
+            MP_THREAD_GIL_ENTER(); \
+            if (ret == -1) { \
+                int err = errno; \
+                if (err == EINTR) { \
+                    mp_handle_pending(true); \
+                    continue; \
+                } \
+                raise; \
+            } \
+            break; \
+        } \
+}
+
+#define RAISE_ERRNO(err_flag, error_val) \
+    { if (err_flag == -1) \
+      { mp_raise_OSError(error_val); } }
+
 #endif
