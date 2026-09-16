@@ -20,6 +20,7 @@
 #include <sys/stat.h>
 
 #include <rtems.h>
+#include <rtems/libcsupport.h>
 #include <rtems/untar.h>
 
 #include <esp_wifi.h>
@@ -38,9 +39,33 @@
 #include "py/persistentcode.h"
 #include "shared/runtime/pyexec.h"
 #include "shared/runtime/gchelper.h"
+
 #include "py/mphal.h"
 
 #include "pywifi.h"
+
+/*
+ * The GC heap is taken from the same C heap the WiFi libraries allocate from,
+ * and on this chip there is not much of it: the C3 has no PSRAM, so the whole
+ * writable world is 272 KiB of SRAM, of which .data/.bss and the RTEMS
+ * Workspace have already taken all but ~102 KiB by the time Init() runs.  The
+ * driver and netif then take ~72 KiB more, which leaves about 31 KiB for this
+ * and for everything the radio allocates afterwards.
+ *
+ * That puts a working range on this number from both sides, and 24 KiB -- the
+ * obvious round figure, and what this example used to pass -- is outside it:
+ *
+ *   24 KiB  ->  2128 bytes left; scan reports 0 networks and
+ *               esp_wifi_set_config() answers ESP_ERR_NO_MEM (printed as 257)
+ *   12 KiB  -> 14416 bytes left; scan, join, DHCP and a socket all work
+ *    8 KiB  -> 18512 bytes left; MicroPython itself raises MemoryError
+ *
+ * Override it with -DMP_HEAP_SIZE when changing what else is linked in; the
+ * report_heap() lines below print the numbers to choose from.
+ */
+#ifndef MP_HEAP_SIZE
+#define MP_HEAP_SIZE (12 * 1024)
+#endif
 
 #define TARFILE_START pywifi_tar
 #define TARFILE_SIZE pywifi_tar_size
@@ -89,6 +114,36 @@ static bool bring_up_the_driver(void)
     return true;
 }
 
+/*
+ * What is left of the C heap, at each point that takes a large bite out of it.
+ *
+ * The C3 has no PSRAM and the linker's RAM region is 272 KiB, all of which is
+ * spoken for by .data/.bss, the RTEMS Workspace and this heap.  The WiFi
+ * libraries allocate from here inside esp_wifi_set_config() and answer
+ * ESP_ERR_NO_MEM (0x101, which MicroPython reports as 257) when they cannot,
+ * so "how much is left" is the difference between a working radio and that
+ * error -- and it cannot be read off the link map, because the GC heap below
+ * is taken at run time.
+ *
+ * largest as well as total: the driver wants one contiguous block, and a
+ * fragmented heap with plenty free still fails.
+ */
+static void report_heap(const char *when)
+{
+    Heap_Information_block info;
+
+    if (malloc_info(&info) != 0) {
+        printf("heap %-34s (malloc_info failed)\n", when);
+        return;
+    }
+
+    printf("heap %-34s free %6lu  largest %6lu  used %6lu\n",
+           when,
+           (unsigned long) info.Free.total,
+           (unsigned long) info.Free.largest,
+           (unsigned long) info.Used.total);
+}
+
 void *POSIX_Init(void *argument)
 {
     rtems_status_code sc;
@@ -96,10 +151,12 @@ void *POSIX_Init(void *argument)
     (void) argument;
 
     printf("\n*** MICROPYTHON WIFI ON RTEMS ***\n");
+    report_heap("at entry");
 
     if (!bring_up_the_driver()) {
         printf("no radio; the script would fail on active(True)\n");
     }
+    report_heap("after the driver and netif");
 
     sc = Untar_FromMemory((void *) TARFILE_START, TARFILE_SIZE);
     if (sc != RTEMS_SUCCESSFUL) {
@@ -116,7 +173,7 @@ void *POSIX_Init(void *argument)
      * later, somewhere unrelated.
      */
     {
-        const size_t heap_size = 24 * 1024;
+        const size_t heap_size = MP_HEAP_SIZE;
         char *heap = malloc(heap_size);
 
         if (heap == NULL) {
@@ -124,6 +181,7 @@ void *POSIX_Init(void *argument)
             exit(1);
         }
         gc_init(heap, heap + heap_size);
+        report_heap("after the GC heap");
     }
 
     mp_init();

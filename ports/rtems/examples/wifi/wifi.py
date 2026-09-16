@@ -26,17 +26,20 @@ AUTH = {
 
 
 def spin():
-    """Wait a little without sleeping.
+    """Wait between polls, giving the rest of the system the CPU.
 
-    time.sleep_ms() does not return once the radio is associating on this
-    port -- see the issue. Spinning is wrong (it burns the CPU and can starve
-    the WiFi tasks) and is here only so the example can be run end to end
-    while that is outstanding.
+    This was a busy loop while time.sleep_ms() was broken on this port: the
+    delay was built with tv_nsec set from the millisecond remainder, so
+    sleep_ms(100) asked for 100 nanoseconds and every sub-second sleep returned
+    at once. A poll loop then burned its whole budget before the thing it was
+    waiting for could happen -- which is why DHCP never completed here, while
+    the same association from C did get a lease.
+
+    Spinning is not a workaround for that, it is a second bug on top of it: at
+    this task's priority it starves the lwIP and WiFi tasks that have to run
+    for the answer to arrive.
     """
-    n = 0
-    for _ in range(3000):
-        n += 1
-    return n
+    time.sleep_ms(50)
 
 
 def mac_str(b):
