@@ -155,7 +155,14 @@
 #define MICROPY_PY_HEAPQ                        (1)
 
 /* hashlib */
+/*
+ * Overridable, because it cannot coexist with the WiFi supplicant: both carry
+ * their own SHA-256 and both define sha256_init with external linkage, so a
+ * build that links the two fails with "multiple definition of `sha256_init'".
+ */
+#ifndef MICROPY_PY_HASHLIB
 #define MICROPY_PY_HASHLIB                      (1)
+#endif
 
 /* uctypes module */
 #define MICROPY_PY_UCTYPES                      (1)

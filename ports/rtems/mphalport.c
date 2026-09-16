@@ -93,15 +93,46 @@ uint64_t mp_hal_time_ns(void) {
 /* Wait for specified amount of milliseconds */
 void mp_hal_delay_ms(uint64_t delay) {
   struct timespec duration;
-  duration.tv_sec = delay / 1000;
-  duration.tv_nsec = delay % 1000;
 
-  nanosleep(&duration, NULL);
+  /*
+   * The remainder is milliseconds and tv_nsec is nanoseconds, so it has to be
+   * scaled by a million.  Without that, time.sleep_ms(100) sleeps for 100
+   * nanoseconds: every delay shorter than a second returns immediately, and
+   * any loop that polls while waiting for something spins through its whole
+   * budget before the thing it is waiting for can happen.
+   */
+  duration.tv_sec = delay / 1000;
+  duration.tv_nsec = (long)(delay % 1000) * 1000000L;
+
+  (void)duration;
+
+  /*
+   * rtems_task_wake_after(), not nanosleep().
+   *
+   * nanosleep() does not return here: a script that polls in a loop prints its
+   * first iteration and then stops, with the radio still working and the event
+   * task still running underneath it.  Whatever the cause, the directive is
+   * the one the rest of this port already uses -- mp_hal_delay_us() below --
+   * and it is what the ticker actually drives.
+   */
+  {
+    rtems_interval ticks =
+      (rtems_interval)((delay * rtems_clock_get_ticks_per_second() + 999u) / 1000u);
+    rtems_task_wake_after(ticks != 0 ? ticks : 1);
+  }
 }
 
 /* Wait for specified amount of microseconds */
 void mp_hal_delay_us(uint64_t delay) {
-  rtems_task_wake_after(rtems_clock_get_ticks_per_second() * delay / 1e6);
+  /*
+   * Integer arithmetic, and at least one tick for a non-zero delay.  The
+   * floating-point form rounded any delay under half a tick to zero, so
+   * sleep_us() of anything shorter than the tick did not wait at all.
+   */
+  rtems_interval ticks =
+    (rtems_interval)((delay * rtems_clock_get_ticks_per_second() + 999999u) / 1000000u);
+
+  rtems_task_wake_after(ticks != 0 ? ticks : 1);
 }
 
 uint64_t mp_hal_ticks_ms(void) {

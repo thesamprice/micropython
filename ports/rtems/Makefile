@@ -47,9 +47,21 @@ RTEMS_TARGET_LDFLAGS += $(shell pkg-config --with-path=$(RTEMS_PKGCONFIG) --libs
 CFLAGS += $(RTEMS_TARGET_CFLAGS)
 LDFLAGS += $(RTEMS_TARGET_LDFLAGS)
 
+# lwIP's headers and library, when they are not in the BSP's own prefix.
+#
+# rtems-lwip installs into whichever prefix it was built against, and a BSP can
+# reasonably have been built twice -- once per console, say -- with lwIP built
+# against only one of them.  The headers are the same either way, so pointing
+# at them is better than rebuilding lwIP to move a directory.
+#
+#   make lib RTEMS_BSP=riscv/esp32c3db RTEMS_PREFIX=... \
+#       LWIP_CFLAGS="-isystem /path/to/other-prefix/riscv-rtems7/esp32c3db/lib/include"
+CFLAGS += $(LWIP_CFLAGS)
+
 # Define the required source files.
 SRC_C =                               \
     modsocket.c                       \
+    $(WLAN_SRC)                       \
     extmod/modselect.c                \
     shared/readline/readline.c        \
     shared/runtime/gchelper_generic.c \
@@ -59,7 +71,7 @@ SRC_C =                               \
     extmod/modrandom.c                \
     extmod/modplatform.c              \
     extmod/modheapq.c                 \
-    extmod/modhashlib.c               \
+    $(HASHLIB_SRC)                    \
     extmod/modre.c                    \
     extmod/modos.c                    \
     extmod/modjson.c                  \
@@ -75,7 +87,30 @@ SRC_C =                               \
 # modsocket.c is here for the same reason as the two below: its method names
 # -- bind, listen, accept, recv -- are qstrs, and a file not scanned here
 # compiles against qstr identifiers that were never generated.
-SRC_QSTR += shared/readline/readline.c shared/runtime/pyexec.c modsocket.c
+SRC_QSTR += shared/readline/readline.c shared/runtime/pyexec.c modsocket.c $(WLAN_SRC)
+
+# network.WLAN, for BSPs that have a radio.
+#
+# Off unless asked for: it needs the ESP32-C3 WiFi driver and its headers, and
+# a BSP without one would fail to compile a module it can never use.  Turn it
+# on with WLAN=1 and point WLAN_CFLAGS at the driver's includes.
+ifeq ($(WLAN),1)
+WLAN_SRC = modnetwork.c
+CFLAGS += $(WLAN_CFLAGS)
+
+CFLAGS += -DMICROPY_PY_HASHLIB=0
+
+# hashlib is left out when linking beside the WiFi supplicant.
+#
+# extmod/modhashlib.c carries its own SHA-256 and so does the supplicant's
+# src/crypto/sha256-internal.c, and both define sha256_init and its siblings
+# with external linkage -- the link fails with "multiple definition of
+# `sha256_init'".  Dropping the module is the smaller loss here; making the two
+# coexist means renaming one set or hiding it, which is worth doing but is not
+# this example's business.
+else
+HASHLIB_SRC = extmod/modhashlib.c
+endif
 
 # Define the required object files.
 OBJ = $(PY_CORE_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
