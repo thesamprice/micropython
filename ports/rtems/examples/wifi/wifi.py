@@ -89,7 +89,13 @@ def dhcp(wlan):
     print("asking for a DHCP lease...")
     wlan.ifconfig("dhcp")
 
-    for _ in range(200):
+    # 400 polls at 50ms is 20 seconds, against a lease that arrives in 6.8s
+    # when nothing goes wrong and 8.9s when it goes slightly wrong. The margin
+    # is deliberately generous because the 6.8s is itself a bug -- lwIP burns
+    # two DISCOVER retries on a link raised before the WPA2 keys exist, see the
+    # issue -- and a budget sized to today's timing would start failing for a
+    # second, unrelated-looking reason the moment that timing shifts.
+    for _ in range(400):
         addr = wlan.ifconfig()[0]
         if addr not in ("0.0.0.0", "192.0.2.1"):
             print("  address %s  netmask %s  gateway %s" % wlan.ifconfig()[:3])
