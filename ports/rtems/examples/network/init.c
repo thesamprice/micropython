@@ -1,17 +1,18 @@
 /* SPDX-License-Identifier: BSD-2-Clause */
 
 /*
- * Copyright (C) 2025 Sameer Srivastava <sam33r012@gmail.com>
+ * Copyright (C) 2026 Samuel Price <thesamprice@gmail.com>
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  * Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -25,42 +26,40 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef INCLUDED_MPHALPORT_H
-#define INCLUDED_MPHALPORT_H
-
-static inline void mp_hal_set_interrupt_char(char c) {}
-
-
 /*
- * PEP 475: a syscall interrupted by a signal is retried rather than raising.
+ * RTEMS configuration for the networking example.
  *
- * Taken from ports/unix/mphalport.h unchanged, because ports/unix/modsocket.c
- * -- which this port uses for its socket module, RTEMS having BSD sockets --
- * expects both of these from the port's HAL header rather than from a shared
- * one.  Neither macro is unix-specific: they use only MP_THREAD_GIL_*, errno
- * and mp_handle_pending().
+ * The difference from test/init.c is the interface: lwIP has to be up before
+ * Python asks for a socket, and bringing it up is C's job rather than the
+ * script's.  Which controller the board has and how it is wired is decided
+ * when the BSP is built, so there is nothing for a Python program to choose;
+ * what is left for it is the address, and even that is only here because this
+ * example uses a static one.
+ *
+ * More file descriptors than test/init.c, because sockets are descriptors and
+ * five is what a REPL alone needs.
  */
-#include <errno.h>
 
-#define MP_HAL_RETRY_SYSCALL(ret, syscall, raise) { \
-        for (;;) { \
-            MP_THREAD_GIL_EXIT(); \
-            ret = syscall; \
-            MP_THREAD_GIL_ENTER(); \
-            if (ret == -1) { \
-                int err = errno; \
-                if (err == EINTR) { \
-                    mp_handle_pending(true); \
-                    continue; \
-                } \
-                raise; \
-            } \
-            break; \
-        } \
-}
+#include <bsp.h>
 
-#define RAISE_ERRNO(err_flag, error_val) \
-    { if (err_flag == -1) \
-      { mp_raise_OSError(error_val); } }
+#define CONFIGURE_APPLICATION_NEEDS_CLOCK_DRIVER
+#define CONFIGURE_APPLICATION_NEEDS_CONSOLE_DRIVER
+#define CONFIGURE_APPLICATION_NEEDS_LIBBLOCK
 
-#endif
+#define CONFIGURE_MICROSECONDS_PER_TICK 1000
+
+#define CONFIGURE_MAXIMUM_FILE_DESCRIPTORS 32
+
+#define CONFIGURE_UNLIMITED_OBJECTS
+#define CONFIGURE_UNIFIED_WORK_AREAS
+
+void *POSIX_Init(void *argument);
+
+#define CONFIGURE_POSIX_INIT_THREAD_TABLE
+#define CONFIGURE_MAXIMUM_POSIX_THREADS 16
+#define CONFIGURE_MINIMUM_TASK_STACK_SIZE (32 * 1024)
+
+#define CONFIGURE_RTEMS_FLOATING_POINT
+
+#define CONFIGURE_INIT
+#include <rtems/confdefs.h>

@@ -50,8 +50,23 @@ static mp_thread_t *thread_list = NULL;
 
 
 void mp_thread_init(void) {
-  /* Lower main thread priority so worker threads can preempt it */
-  rtems_task_set_priority(RTEMS_SELF, 50, NULL);
+  /*
+   * The calling task's priority is left alone.
+   *
+   * This used to drop it to 50 so that worker threads could preempt the main
+   * one.  That is not this function's decision to make: mp_init() is called by
+   * an application that has already chosen where the interpreter belongs among
+   * everything else running, and threads created later get their priority from
+   * mp_thread_create() anyway.
+   *
+   * On a board where something else runs above 50 it is not merely impolite,
+   * it is fatal.  With the ESP32-C3 WiFi driver the radio's tasks sit at RTEMS
+   * priority 2 or so, and an interpreter demoted to 50 never runs again once
+   * the station associates: the symptom is that time.sleep_ms() never returns,
+   * while the identical rtems_task_wake_after() from C -- before mp_init() --
+   * works, which sends you looking at the clock and the delay path rather than
+   * at a priority nothing mentioned changing.
+   */
 
   /* Initialize global mutex for thread list */
   rtems_mutex_init(&thread_list_mutex, NULL);
@@ -184,6 +199,24 @@ mp_state_thread_t *mp_thread_get_state(void) {
   }
 
   unlock_threads_list();
+
+  /*
+   * A task that is not in the list is the one that has not registered yet,
+   * and that is always the main one: mp_thread_init() adds it, and it is
+   * called from mp_init().  Anything MicroPython does before that -- and
+   * mp_stack_ctrl_init() is called before it by every port's main() --
+   * reaches MP_STATE_THREAD, which is mp_thread_get_state()->field.
+   *
+   * Returning NULL there means dereferencing NULL.  On i386/pc686 that
+   * happens to land in mapped low memory and the store is silently lost; on
+   * arm/xilinx_zynq_a9_qemu it is a data abort before a single line of output,
+   * which is why the port ran on one and not the other.
+   *
+   * The main thread's state lives in mp_state_ctx, so hand that back.
+   */
+  if (result == NULL) {
+    result = &mp_state_ctx.thread;
+  }
 
   return result;
 }
