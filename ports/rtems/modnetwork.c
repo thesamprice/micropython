@@ -21,6 +21,8 @@
  */
 
 #include "py/runtime.h"
+
+#include <rtems/bspIo.h>
 #include "py/objstr.h"
 #include "py/objtuple.h"
 #include "py/mphal.h"
@@ -64,6 +66,9 @@ static void wlan_event(void *arg, const char *base, int32_t id, void *data) {
     (void)arg;
     (void)base;
 
+    #ifdef WLAN_TRACE_EVENTS
+    printk("wlan: event base=%s id=%d\n", base ? (const char *)base : "?", (int)id);
+#endif
     switch (id) {
         case WIFI_EVENT_STA_CONNECTED:
             wlan_connected = true;
@@ -73,6 +78,11 @@ static void wlan_event(void *arg, const char *base, int32_t id, void *data) {
             if (data != NULL) {
                 const wifi_event_sta_disconnected_t *d = data;
                 wlan_last_reason = d->reason;
+#ifdef WLAN_TRACE_EVENTS
+                /* The poll loop only reports a reason when it times out, and
+                 * a station that retries forever never gets there. */
+                printk("wlan: disconnected, reason %u\n", (unsigned)d->reason);
+#endif
             }
             break;
         }
