@@ -91,7 +91,22 @@ uint64_t mp_hal_time_ns(void) {
 }
 
 /* Wait for specified amount of milliseconds */
-void mp_hal_delay_ms(uint64_t delay) {
+/*
+ * mp_uint_t, and not uint64_t, because py/mphal.h declares it that way.
+ *
+ * mp_uint_t is uintptr_t here, so it is 32 bits.  Defining the parameter as
+ * uint64_t made every caller pass one register and this function read two:
+ * the low word from a0 and the high word from whatever a1 happened to hold.
+ * time.sleep_ms(50) then asked for a delay built from stale register
+ * contents, and rtems_task_wake_after() did exactly as it was told -- one
+ * observed case slept for 3848291081 ticks, which at 100Hz is 445 days.
+ *
+ * It presented as "sleep does not return once the station is associating",
+ * because what is left in a1 depends on the code that ran before the call,
+ * and that is what changes when the radio starts working.  Ordinary runs left
+ * a zero there and worked, which is what made it intermittent.
+ */
+void mp_hal_delay_ms(mp_uint_t delay) {
   struct timespec duration;
 
   /*
@@ -123,7 +138,7 @@ void mp_hal_delay_ms(uint64_t delay) {
 }
 
 /* Wait for specified amount of microseconds */
-void mp_hal_delay_us(uint64_t delay) {
+void mp_hal_delay_us(mp_uint_t delay) {
   /*
    * Integer arithmetic, and at least one tick for a non-zero delay.  The
    * floating-point form rounded any delay under half a tick to zero, so
