@@ -144,6 +144,30 @@ static void report_heap(const char *when)
            (unsigned long) info.Used.total);
 }
 
+/*
+ * How long a tick really is, measured against the host's clock.
+ *
+ * The target has no independent time source to check itself against, so this
+ * prints a marker, sleeps a known number of ticks, and prints another: the
+ * console timestamps on the host are the outside clock.  Run it before and
+ * after the driver comes up, because bringing up WiFi moves the CPU from the
+ * 40 MHz crystal to the 160 MHz PLL, and if the clock driver programmed its
+ * comparator from the boot frequency the tick changes length underneath RTEMS
+ * -- every timeout in the system is then wrong by that ratio, which is a
+ * plausible cause of WIFI_REASON_AUTH_EXPIRE during the four-way handshake.
+ */
+static void probe_tick(const char *when)
+{
+    rtems_interval per_second = rtems_clock_get_ticks_per_second();
+
+    printf("tick-probe %-14s ticks_per_second=%lu  sleeping %lu ticks\n",
+           when, (unsigned long) per_second, (unsigned long) per_second);
+    fflush(stdout);
+    rtems_task_wake_after(per_second);
+    printf("tick-probe %-14s done\n", when);
+    fflush(stdout);
+}
+
 void *POSIX_Init(void *argument)
 {
     rtems_status_code sc;
@@ -152,11 +176,17 @@ void *POSIX_Init(void *argument)
 
     printf("\n*** MICROPYTHON WIFI ON RTEMS ***\n");
     report_heap("at entry");
+#ifdef RTEMS_TICK_PROBE
+    probe_tick("before wifi");
+#endif
 
     if (!bring_up_the_driver()) {
         printf("no radio; the script would fail on active(True)\n");
     }
     report_heap("after the driver and netif");
+#ifdef RTEMS_TICK_PROBE
+    probe_tick("after wifi");
+#endif
 
     sc = Untar_FromMemory((void *) TARFILE_START, TARFILE_SIZE);
     if (sc != RTEMS_SUCCESSFUL) {
