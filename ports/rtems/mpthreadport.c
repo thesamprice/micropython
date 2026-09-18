@@ -49,25 +49,22 @@ typedef struct _mp_thread_t {
 static mp_thread_t *thread_list = NULL;
 
 
-void mp_thread_init(void) {
-  /* Lower main thread priority so worker threads can preempt it */
-  rtems_task_set_priority(RTEMS_SELF, 50, NULL);
+/* Static, so this can run before the heap exists -- which it must, since it
+ * has to run before anything reaches MP_STATE_THREAD. */
+static mp_thread_t thread_entry0;
 
-  /* Initialize global mutex for thread list */
+void mp_thread_init(void) {
   rtems_mutex_init(&thread_list_mutex, NULL);
 
-  /* Create first list entry for the main thread */
-  mp_thread_t *m = malloc(sizeof(mp_thread_t));
-  if (m == NULL) {
-    mp_raise_msg(&mp_type_OSError, "malloc failed");
-  }
+  /* The main thread's state is mp_state_ctx.thread, which is what
+   * mp_thread_is_main_thread() compares mp_thread_get_state() against. */
+  thread_entry0.id = rtems_task_self();
+  thread_entry0.ready = true;
+  thread_entry0.arg = NULL;
+  thread_entry0.state = &mp_state_ctx.thread;
+  thread_entry0.next = NULL;
 
-  m->id = rtems_task_self(); /* main thread ID */
-  m->ready = true;
-  m->arg = NULL;                   /* no thread-entry args for main */
-  m->state = &mp_state_ctx.thread; /* main thread uses mp_state_ctx.thread */
-  m->next = NULL;
-  thread_list = m;
+  thread_list = &thread_entry0;
 }
 
 
