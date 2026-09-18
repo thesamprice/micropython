@@ -42,6 +42,7 @@
 #include "shared/runtime/gchelper.h"
 #include "shared/runtime/pyexec.h"
 #include "py/runtime.h"
+#include "py/mpthread.h"
 
 #include "py/misc.h"
 #include "genhdr/mpversion.h"
@@ -92,7 +93,11 @@ void *POSIX_Init(void *argument) {
             printf ("error: untar failed: %s\n", rtems_status_text (sc));
         }
 
-        /* Initialise the MicroPython runtime */
+        /* Initialise the MicroPython runtime.  mp_thread_init() first:
+         * mp_stack_ctrl_init() already reaches MP_STATE_THREAD, which with
+         * MICROPY_PY_THREAD is mp_thread_get_state(), and nothing in py/
+         * calls mp_thread_init() -- it is the port's to call, as in esp32. */
+        mp_thread_init();
         mp_stack_ctrl_init();
         gc_init(heap, heap + sizeof(heap));
 

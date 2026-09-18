@@ -90,18 +90,29 @@ uint64_t mp_hal_time_ns(void) {
   return rtems_clock_get_uptime_nanoseconds();
 }
 
-/* Wait for specified amount of milliseconds */
-void mp_hal_delay_ms(uint64_t delay) {
+/*
+ * nanosleep() needs no clamp of its own: the monotonic watchdog is serviced
+ * from the clock tick, so a non-zero duration cannot return early, and the
+ * deadline is absolute, so it cannot undershoot.  uint64_t because mp_uint_t
+ * is 32 bits here and the callers' multiply would overflow.
+ */
+static void port_delay_ns(uint64_t ns) {
   struct timespec duration;
-  duration.tv_sec = delay / 1000;
-  duration.tv_nsec = delay % 1000;
+
+  duration.tv_sec = (time_t)(ns / 1000000000ULL);
+  duration.tv_nsec = (long)(ns % 1000000000ULL);
 
   nanosleep(&duration, NULL);
 }
 
+/* Wait for specified amount of milliseconds */
+void mp_hal_delay_ms(mp_uint_t delay) {
+  port_delay_ns((uint64_t)delay * 1000000ULL);
+}
+
 /* Wait for specified amount of microseconds */
-void mp_hal_delay_us(uint64_t delay) {
-  rtems_task_wake_after(rtems_clock_get_ticks_per_second() * delay / 1e6);
+void mp_hal_delay_us(mp_uint_t delay) {
+  port_delay_ns((uint64_t)delay * 1000ULL);
 }
 
 uint64_t mp_hal_ticks_ms(void) {

@@ -137,7 +137,11 @@
 #define MICROPY_PY_HEAPQ                        (1)
 
 /* hashlib */
+/* Overridable: extmod/modhashlib.c and the WPA supplicant both define
+ * sha256_init with external linkage and cannot be linked together. */
+#ifndef MICROPY_PY_HASHLIB
 #define MICROPY_PY_HASHLIB                      (1)
+#endif
 
 /* uctypes module */
 #define MICROPY_PY_UCTYPES                      (1)
